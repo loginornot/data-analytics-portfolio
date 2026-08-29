@@ -18,11 +18,13 @@ I also bring five years of U.S. Navy logistics experience and am currently trans
 ### 1. Stack Overflow Salary Analysis
 **Focus:** Data cleaning, exploratory analysis, statistical testing, compensation analysis
 
-Analyzed Stack Overflow survey data to investigate relationships between compensation and factors such as education, professional coding experience, and lifestyle variables. The project includes data selection and cleaning, salary normalization, outlier handling, visualization, and statistical hypothesis testing.
+Analyzed Stack Overflow survey data to investigate relationships between compensation and factors such as age, professional coding experience, formal education, and work-pattern variables. The portfolio-ready version preserves the original 2019 analysis while improving reproducibility, documentation, neutral labeling, and statistical interpretation.
 
 **Skills:** Python, Pandas, NumPy, SciPy, Matplotlib, statistical testing
 
-[View the notebook](Projects/Machine_Learning/Supervised_Learning_Projects/Stackoverflow_users_salary_prediction.ipynb)
+[View the portfolio-ready notebook](Projects/Machine_Learning/Supervised_Learning_Projects/StackOverflow_Salary_Analysis_Portfolio.ipynb)
+
+[View the preserved original 2019 notebook](Projects/Machine_Learning/Supervised_Learning_Projects/Stackoverflow_users_salary_prediction.ipynb)
 
 ### 2. Iowa Liquor Sales A/B Test Proposal
 **Focus:** Business analysis, sales trends, profitability, experiment design
@@ -59,6 +61,7 @@ Projects/
 │   └── Iowa_Liquor_Store_AB_Test_Proposal.ipynb
 └── Machine_Learning/
     ├── Supervised_Learning_Projects/
+    │   ├── StackOverflow_Salary_Analysis_Portfolio.ipynb
     │   ├── Stackoverflow_users_salary_prediction.ipynb
     │   └── Zillow_Kaggle_Zestimate_Competition.ipynb
     └── Unsupervised_Learning_Projects/
@@ -67,4 +70,4 @@ Projects/
 
 ## Portfolio Note
 
-These notebooks preserve the original analyses from my Thinkful coursework. Because they were created in 2019, some local file paths, package versions, and library syntax reflect the development environment used at the time. I am progressively improving documentation and reproducibility while keeping the original analytical work intact.
+These projects originated in my 2019 Thinkful coursework. Portfolio-ready copies are being created separately from the original notebooks so the original work remains preserved during the refresh process. Documentation and reproducibility may be modernized, but the portfolio does not present the original analyses as newly completed work.
