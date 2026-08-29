@@ -18,7 +18,7 @@ I also bring five years of U.S. Navy logistics experience and am currently trans
 ### 1. Stack Overflow Salary Analysis
 **Focus:** Data cleaning, exploratory analysis, statistical testing, compensation analysis
 
-Analyzed Stack Overflow survey data to investigate relationships between compensation and factors such as age, professional coding experience, formal education, and work-pattern variables. The portfolio-ready version preserves the original 2019 analysis while improving reproducibility, documentation, neutral labeling, and statistical interpretation.
+Analyzed the 2018 Stack Overflow Developer Survey to investigate relationships between compensation and factors such as age, professional coding experience, formal education, and work-pattern variables among respondents who reported salary in U.S. dollars. The portfolio-ready version preserves the original 2019 coursework logic while improving reproducibility, documentation, neutral labeling, and statistical interpretation. Selected descriptive charts use medians as a presentation refinement.
 
 **Skills:** Python, Pandas, NumPy, SciPy, Matplotlib, statistical testing
 
