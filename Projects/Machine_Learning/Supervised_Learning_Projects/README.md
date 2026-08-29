@@ -6,22 +6,25 @@ This folder contains two projects completed during Thinkful Data Science trainin
 
 This is the strongest project in this folder for data analyst and business analyst applications.
 
-[Open the Stack Overflow Salary Analysis notebook](Stackoverflow_users_salary_prediction.ipynb)
+[Open the portfolio-ready Stack Overflow Salary Analysis](StackOverflow_Salary_Analysis_Portfolio.ipynb)
+
+[View the preserved original 2019 notebook](Stackoverflow_users_salary_prediction.ipynb)
 
 ### Business / Analytical Question
 
-What factors appear to be associated with compensation among U.S.-based Stack Overflow survey respondents?
+What factors appear to be associated with compensation among Stack Overflow survey respondents who reported salary in U.S. dollars?
 
 ### What the analysis demonstrates
 
 - Selecting relevant variables from a large survey dataset
 - Cleaning and standardizing salary data
 - Converting salary values to a common annual basis
-- Handling missing values and unrealistic outliers
-- Comparing compensation across demographic and professional groups
+- Handling missing values and extreme salary observations
+- Comparing compensation across age, professional experience, education, and work-pattern groups
 - Using visual analysis to inspect patterns
-- Applying statistical hypothesis tests, including independent-sample t-tests
-- Translating statistical findings into written conclusions and follow-up questions
+- Applying statistical hypothesis tests, including Welch independent-samples t-tests
+- Distinguishing statistical association from causal claims
+- Documenting methodological limitations and possible next steps
 
 ### Tools
 
@@ -29,7 +32,7 @@ Python, Pandas, NumPy, SciPy, Matplotlib, Jupyter Notebook
 
 ### Portfolio context
 
-The notebook is preserved from the original 2019 coursework. Some package syntax and local file references reflect the development environment used at the time. The analytical workflow is presented here as evidence of prior hands-on experience with data cleaning, exploratory analysis, and statistical reasoning.
+The portfolio-ready notebook is a presentation and reproducibility refresh of the original 2019 Thinkful capstone. It preserves the original analytical questions, salary transformation logic, $50,000–$195,000 salary bounds, experience categories, composite-segment definition, and statistical comparisons while improving documentation, neutralizing subjective labels, and clarifying statistical interpretation. Descriptive charts use medians in selected places as a presentation refinement. The original notebook remains available in this folder for provenance and comparison.
 
 ---
 
