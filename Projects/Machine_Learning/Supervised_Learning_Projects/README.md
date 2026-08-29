@@ -12,7 +12,7 @@ This is the strongest project in this folder for data analyst and business analy
 
 ### Business / Analytical Question
 
-What factors appear to be associated with compensation among U.S.-based Stack Overflow survey respondents?
+What factors appear to be associated with compensation among Stack Overflow survey respondents who reported salary in U.S. dollars?
 
 ### What the analysis demonstrates
 
@@ -32,7 +32,7 @@ Python, Pandas, NumPy, SciPy, Matplotlib, Jupyter Notebook
 
 ### Portfolio context
 
-The portfolio-ready notebook is a presentation and reproducibility refresh of the original 2019 Thinkful capstone. It preserves the original analytical questions, salary transformation logic, experience categories, and statistical comparisons while improving documentation, neutralizing subjective labels, and clarifying statistical interpretation. The original notebook remains available in this folder for provenance and comparison.
+The portfolio-ready notebook is a presentation and reproducibility refresh of the original 2019 Thinkful capstone. It preserves the original analytical questions, salary transformation logic, $50,000–$195,000 salary bounds, experience categories, composite-segment definition, and statistical comparisons while improving documentation, neutralizing subjective labels, and clarifying statistical interpretation. Descriptive charts use medians in selected places as a presentation refinement. The original notebook remains available in this folder for provenance and comparison.
 
 ---
 
