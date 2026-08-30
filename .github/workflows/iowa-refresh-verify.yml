@@ -1,0 +1,116 @@
+name: Verify Iowa liquor portfolio refresh
+
+on:
+  push:
+    branches:
+      - iowa-liquor-refresh
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Download historical Casey subset
+        run: python scripts/download_iowa_caseys_subset.py
+
+      - name: Print verification checkpoints
+        run: |
+          python - <<'PY'
+          import pandas as pd
+
+          path = 'data/iowa_caseys_2012_to_2017_10_31.csv'
+          df = pd.read_csv(path, low_memory=False)
+          df['date'] = pd.to_datetime(df['date'], errors='coerce')
+
+          numeric = [
+              'state_bottle_cost', 'state_bottle_retail', 'sale_bottles',
+              'sale_dollars', 'sale_liters'
+          ]
+          for col in numeric:
+              df[col] = pd.to_numeric(df[col], errors='coerce')
+
+          df['itemno'] = df['itemno'].astype('string')
+          df['expected_order_value'] = df['state_bottle_retail'] * df['sale_bottles']
+          df['order_value_gap'] = df['sale_dollars'] - df['expected_order_value']
+          df['order_value_consistent'] = df['order_value_gap'].abs() <= 0.02
+          df['state_acquisition_cost'] = df['state_bottle_cost'] * df['sale_bottles']
+          df['derived_wholesale_margin'] = df['sale_dollars'] - df['state_acquisition_cost']
+
+          print('=== DATA CHECKPOINTS ===')
+          print('rows:', len(df))
+          print('min_date:', df['date'].min())
+          print('max_date:', df['date'].max())
+          print('unique_store_names:', df['name'].nunique())
+          print('order_value_consistent_share:', df['order_value_consistent'].mean())
+          print('order_value_inconsistent_rows:', (~df['order_value_consistent']).sum())
+
+          print('\n=== ORIGINAL DERIVED-MARGIN TOP ITEMS ===')
+          top_items = (
+              df.groupby(['itemno', 'category_name'], dropna=False)['derived_wholesale_margin']
+                .sum()
+                .sort_values(ascending=False)
+                .head(10)
+          )
+          print(top_items.to_string())
+
+          target_items = {'11788', '11776', '35918'}
+          all_store = df.groupby('name')['derived_wholesale_margin'].sum()
+          without_top3 = (
+              df.loc[~df['itemno'].isin(target_items)]
+                .groupby('name')['derived_wholesale_margin'].sum()
+          )
+
+          print('\n=== ORIGINAL STORE CHECKPOINTS ===')
+          for store in [
+              "Casey's General Store #3055 / Grundy Center",
+              "Casey's General Store #3050 / Council Bluffs",
+              "Casey's General Store #1706 / Winterset",
+          ]:
+              original = all_store.get(store, float('nan'))
+              no_top3 = without_top3.get(store, float('nan'))
+              print(store)
+              print('  original_derived_margin:', original)
+              print('  without_top3:', no_top3)
+              print('  indicator:', original - no_top3)
+
+          print('\n=== REFRESHED TOP PRODUCTS BY ORDER VALUE ===')
+          product_summary = (
+              df.groupby(['itemno', 'im_desc'], dropna=False)
+                .agg(
+                    order_value=('sale_dollars', 'sum'),
+                    liters_ordered=('sale_liters', 'sum'),
+                    order_lines=('invoice_line_no', 'count'),
+                    stores=('name', 'nunique'),
+                )
+                .sort_values('order_value', ascending=False)
+                .head(15)
+          )
+          print(product_summary.to_string())
+          PY
+
+      - name: Execute portfolio notebook
+        run: |
+          jupyter nbconvert \
+            --to notebook \
+            --execute Projects/Data_Analyze/Iowa_Liquor_Promotion_Experiment_Portfolio.ipynb \
+            --ExecutePreprocessor.timeout=600 \
+            --output /tmp/Iowa_Liquor_Promotion_Experiment_Portfolio_executed.ipynb
+
+      - name: Upload executed notebook
+        uses: actions/upload-artifact@v4
+        with:
+          name: iowa-portfolio-executed
+          path: /tmp/Iowa_Liquor_Promotion_Experiment_Portfolio_executed.ipynb
+          retention-days: 7
