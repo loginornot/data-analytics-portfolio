@@ -8,19 +8,22 @@ The original notebook loaded a local pickle (`F:/Thinkful/Datasets/liquor_datafr
 
 Evidence preserved in the notebook indicates:
 
-- Source dataset: State of Iowa **Iowa Liquor Sales** (`m3tr-qhgy`)
+- Source: State of Iowa **Iowa Liquor Sales** data
 - Historical coverage start: **January 3, 2012**
 - Historical snapshot cutoff: **October 31, 2017**
 - Historical snapshot size: **approximately 12.59 million rows**
-- The final preserved index is `12,590,908`, strongly indicating **12,590,909 rows** in the original zero-indexed snapshot.
-- The original schema used the classic 24-column Iowa Liquor Sales layout, including Invoice/Item Number, Date, Store Number, Store Name, Category, Vendor, Item, State Bottle Cost, State Bottle Retail, Bottles Sold, Sale (Dollars), and volume fields.
+- Final preserved index: `12,590,908`, strongly indicating **12,590,909 rows** in the original zero-indexed snapshot
+- Original schema: the classic 24-column Iowa Liquor Sales layout, including Invoice/Item Number, Date, Store Number, Store Name, Category, Vendor, Item, State Bottle Cost, State Bottle Retail, Bottles Sold, Sale (Dollars), and volume fields
 
-The live Iowa dataset is still published under dataset identifier `m3tr-qhgy` and currently describes coverage beginning in January 2012. Because the public dataset can receive retrospective corrections, a live query restricted to the same dates should be treated as a **reconstruction of the historical window**, not guaranteed byte-for-byte reproduction of the 2017 snapshot. The original row count and preserved notebook outputs are therefore reference checkpoints rather than strict assertions against the current API.
+The dataset was historically exposed through a Socrata view associated with identifier `m3tr-qhgy`. Iowa's current Data Hub catalog has since modernized the dataset presentation. The current catalog lists the table as `liquor_sales_combined`, uses `invoice_id` as the unique identifier, and uses `ordered_on` as the record date. It describes coverage beginning January 3, 2012.
 
-Official source documentation:
+Because the public dataset can receive retrospective corrections, a current export filtered to January 3, 2012 through October 31, 2017 should be treated as a **reconstruction of the historical window**, not guaranteed byte-for-byte reproduction of the 2017 snapshot. The preserved row count and original notebook outputs are therefore historical checkpoints rather than strict assertions against today's data.
+
+Official current catalog:
 
 - https://data.iowa.gov/catalog/dataset/1051
-- https://dev.socrata.com/foundry/data.iowa.gov/m3tr-qhgy
+
+The portfolio notebook deliberately does not hard-code an unverified legacy API endpoint. It accepts a local export from the current Iowa Data Hub (or the exact historical snapshot, if available), normalizes legacy/current column names, and filters to the reconstructed historical window.
 
 ## Critical semantic correction
 
@@ -33,30 +36,30 @@ Profit = Sale_Dollars - Total_Cost
 
 This was interpreted as retailer/store profit. That interpretation is incorrect.
 
-According to the Iowa dataset documentation:
+The Iowa dataset describes spirits purchases by licensed retailers from the state. In the historical field definitions:
 
-- **State Bottle Cost** is the amount the Iowa Alcoholic Beverages Division paid for each bottle.
-- **State Bottle Retail** is the amount the store paid for each bottle.
-- **Sale (Dollars)** is the total cost of the liquor order paid by the store to the state.
-- **Bottles Sold** represents bottles ordered by the store.
+- **State Bottle Cost** represents the state's per-bottle acquisition cost.
+- **State Bottle Retail** represents the per-bottle amount charged to the retailer.
+- **Sale (Dollars)** represents the order-line dollar amount.
+- **Bottles Sold** represents bottles purchased/ordered by the retailer.
 
-Therefore, `Sale_Dollars - State_Bottle_Cost * Bottles_Sold` is closer to a **state wholesale gross-margin proxy**, not Casey's General Store profit. The dataset does not contain Casey's consumer point-of-sale revenue or operating costs, so retailer profit cannot be calculated from this dataset.
+Therefore, `Sale_Dollars - State_Bottle_Cost * Bottles_Sold` is closer to a **state wholesale gross-margin proxy**, not Casey's General Store profit. The dataset does not contain Casey's consumer point-of-sale revenue or operating costs, so retailer profit cannot be calculated from this source.
 
-This also means the project should describe the Iowa records as **state-to-retailer liquor orders / purchase transactions**, not direct consumer checkout sales.
+The project should therefore describe the Iowa records as **state-to-retailer liquor purchases/orders**, not consumer checkout sales.
 
 ## Data-quality issues found in the original notebook
 
-The preserved outputs contain rows where `Sale (Dollars)` does not reconcile with `State Bottle Retail × Bottles Sold`. For example, a Casey's row dated October 31, 2017 shows State Bottle Retail of $13.47, 3 bottles sold/ordered, but Sale (Dollars) of $13.47. Other rows show the opposite pattern, with Sale (Dollars) several times larger than the retail-price-times-bottle-count calculation.
+Preserved outputs contain rows where `Sale (Dollars)` does not reconcile with `State Bottle Retail × Bottles Sold`. For example, several Casey's records dated October 31, 2017 show order-dollar amounts that are not equal to the displayed bottle retail price times displayed bottle count.
 
-These rows can create artificial negative or unusually large values in the original derived `Profit` field. The refreshed notebook therefore validates the arithmetic relationship explicitly and flags non-reconciling rows rather than interpreting them as stores giving products away or losing money.
+These records can create artificial negative or unusually large values in the original derived `Profit` field. The refreshed notebook therefore validates the arithmetic relationship explicitly and flags non-reconciling rows rather than interpreting them as stores giving products away or losing money.
 
-Zero values in cost, retail, or order dollars are likewise treated as data-quality/correction records unless additional evidence supports a business interpretation.
+Zero values in cost, retail, bottle count, or order dollars are likewise treated as data-quality/correction records unless additional evidence supports a business interpretation.
 
 ## Cleaning and reproducibility issues
 
 The original notebook:
 
-- depended on an unavailable local pickle and local CSV path;
+- depended on unavailable local pickle and CSV paths;
 - converted currency fields through string replacement without documenting source-version assumptions;
 - cast vendor names to strings, which can convert missing values into the literal string `nan`;
 - normalized dozens of vendor names through sequential `str.replace` calls;
@@ -64,15 +67,15 @@ The original notebook:
 - grouped using display names such as Store Name rather than stable store identifiers in several places;
 - did not explicitly validate duplicate invoice-line identifiers or arithmetic consistency.
 
-The portfolio version uses the public source identifier, explicit date boundaries, numeric coercion with validation, stable identifiers where possible, and narrowly scoped normalization only when required.
+The portfolio version uses explicit date boundaries, numeric coercion with validation, stable identifiers where possible, and a normalization layer that accepts both legacy export labels and modern Data Hub field names.
 
 ## Product-ranking audit
 
-The original notebook ranked Casey's products using the derived `Profit` field and grouped by both Item Number and Category Name. Category capitalization changed over time, so the same item could appear more than once in the ranking. Item `11788`, for example, appears under both `CANADIAN WHISKIES` and `Canadian Whiskies` in the preserved output.
+The original notebook ranked Casey's products using the derived `Profit` field and grouped by both Item Number and Category Name. Category capitalization changed over time, so the same item could appear more than once in the ranking. Item `11788`, for example, appears under both `CANADIAN WHISKIES` and `Canadian Whiskies` in preserved output.
 
 The original proposal then hard-coded items `11788`, `11776`, and `35918` as the top three candidates.
 
-The portfolio version ranks products first by stable **Item Number**, using bottles ordered and order dollars as observable demand measures. Descriptions/categories are presentation attributes rather than grouping keys.
+The portfolio version ranks products first by stable **Item Number**, using bottles ordered and order dollars as observable wholesale-demand measures. Descriptions/categories are presentation attributes rather than grouping keys.
 
 ## Experiment-design audit
 
