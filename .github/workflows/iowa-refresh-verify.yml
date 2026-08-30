@@ -11,38 +11,65 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Inspect Iowa Data Hub CSV and schema downloads
+      - name: Check annual historical cost-field samples
         run: |
           python - <<'PY'
-          import urllib.error
+          import csv
+          import io
           import urllib.request
+          import urllib.parse
 
           base = 'https://data.iowa.gov/api/dataset-download?path='
-          paths = [
-              'datasets/1252/columns.json',
-              'datasets/1252/rows.csv',
-          ]
+          datasets = {
+              2012: 1249,
+              2013: 1250,
+              2014: 1251,
+              2015: 1252,
+              2016: 1253,
+              2017: 1254,
+          }
 
-          for path in paths:
-              print(f'=== {path} ===')
-              headers = {
-                  'User-Agent': 'Mozilla/5.0',
-                  'Referer': 'https://data.iowa.gov/catalog/dataset/1252',
-              }
-              if path.endswith('rows.csv'):
-                  headers['Range'] = 'bytes=0-8191'
-              req = urllib.request.Request(base + urllib.parse.quote(path, safe=''), headers=headers)
-              try:
-                  with urllib.request.urlopen(req, timeout=30) as response:
-                      sample = response.read(8192)
-                      print('status:', response.status)
-                      print('final_url:', response.geturl())
-                      print('content-type:', response.headers.get('content-type'))
-                      print('content-length:', response.headers.get('content-length'))
-                      print('content-range:', response.headers.get('content-range'))
-                      print('content-disposition:', response.headers.get('content-disposition'))
-                      print(sample.decode('utf-8', 'replace'))
-              except urllib.error.HTTPError as exc:
-                  print('status:', exc.code)
-                  print('body:', exc.read(4096).decode('utf-8', 'replace'))
+          for year, dataset_id in datasets.items():
+              path = f'datasets/{dataset_id}/rows.csv'
+              url = base + urllib.parse.quote(path, safe='')
+              req = urllib.request.Request(
+                  url,
+                  headers={
+                      'User-Agent': 'Mozilla/5.0',
+                      'Referer': f'https://data.iowa.gov/catalog/dataset/{dataset_id}',
+                  },
+              )
+              print(f'=== {year} / dataset {dataset_id} ===')
+              with urllib.request.urlopen(req, timeout=45) as response:
+                  sample = response.read(65536)
+                  print('content-disposition:', response.headers.get('content-disposition'))
+
+              marker = sample.find(b'invoice_id,')
+              if marker < 0:
+                  print('Could not locate CSV header in initial ZIP bytes')
+                  continue
+
+              text = sample[marker:].decode('utf-8', 'replace')
+              reader = csv.DictReader(io.StringIO(text))
+              rows = []
+              for row in reader:
+                  if len(rows) >= 25:
+                      break
+                  rows.append(row)
+
+              nonempty_cost = sum(bool((r.get('state_bottle_cost') or '').strip()) for r in rows)
+              nonempty_retail = sum(bool((r.get('state_bottle_retail') or '').strip()) for r in rows)
+              print('sample_rows:', len(rows))
+              print('nonempty_state_bottle_cost:', nonempty_cost)
+              print('nonempty_state_bottle_retail:', nonempty_retail)
+              for row in rows[:3]:
+                  print({
+                      'date': row.get('ordered_on'),
+                      'store': row.get('store_name'),
+                      'item': row.get('item_no'),
+                      'cost': row.get('state_bottle_cost'),
+                      'retail': row.get('state_bottle_retail'),
+                      'bottles': row.get('sales_bottles'),
+                      'dollars': row.get('sales_dollars'),
+                  })
           PY
