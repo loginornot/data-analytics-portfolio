@@ -11,67 +11,38 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Call Iowa Data Hub download server action
+      - name: Inspect Iowa Data Hub CSV and schema downloads
         run: |
           python - <<'PY'
-          import json
           import urllib.error
           import urllib.request
 
-          page_url = 'https://data.iowa.gov/catalog/dataset/1252'
-          action_id = '4014392668b1dd9d27dbc559eb686fbbe14506358f'
-          argument = 'datasets/1252/rows.csv'
-
-          header_sets = [
-              {
-                  'User-Agent': 'Mozilla/5.0',
-                  'Accept': 'text/x-component',
-                  'Content-Type': 'text/plain;charset=UTF-8',
-                  'Next-Action': action_id,
-                  'Origin': 'https://data.iowa.gov',
-                  'Referer': page_url,
-              },
-              {
-                  'User-Agent': 'Mozilla/5.0',
-                  'Accept': '*/*',
-                  'Content-Type': 'text/plain;charset=UTF-8',
-                  'Next-Action': action_id,
-                  'Origin': 'https://data.iowa.gov',
-                  'Referer': page_url,
-              },
+          base = 'https://data.iowa.gov/api/dataset-download?path='
+          paths = [
+              'datasets/1252/columns.json',
+              'datasets/1252/rows.csv',
           ]
 
-          bodies = [
-              json.dumps([argument]).encode(),
-              json.dumps(argument).encode(),
-          ]
-
-          for i, headers in enumerate(header_sets, 1):
-              for j, body in enumerate(bodies, 1):
-                  print(f'=== ATTEMPT headers={i} body={j} ===')
-                  req = urllib.request.Request(
-                      page_url,
-                      data=body,
-                      headers=headers,
-                      method='POST',
-                  )
-                  try:
-                      with urllib.request.urlopen(req, timeout=30) as response:
-                          raw = response.read().decode('utf-8', 'replace')
-                          print('status:', response.status)
-                          print('content-type:', response.headers.get('content-type'))
-                          print('next-action-redirect:', response.headers.get('x-action-redirect'))
-                          print('body:', raw[:5000])
-                  except urllib.error.HTTPError as exc:
-                      raw = exc.read().decode('utf-8', 'replace')
-                      print('status:', exc.code)
-                      print('headers:', dict(exc.headers))
-                      print('body:', raw[:5000])
-                  except Exception as exc:
-                      print('error:', repr(exc))
+          for path in paths:
+              print(f'=== {path} ===')
+              headers = {
+                  'User-Agent': 'Mozilla/5.0',
+                  'Referer': 'https://data.iowa.gov/catalog/dataset/1252',
+              }
+              if path.endswith('rows.csv'):
+                  headers['Range'] = 'bytes=0-8191'
+              req = urllib.request.Request(base + urllib.parse.quote(path, safe=''), headers=headers)
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as response:
+                      sample = response.read(8192)
+                      print('status:', response.status)
+                      print('final_url:', response.geturl())
+                      print('content-type:', response.headers.get('content-type'))
+                      print('content-length:', response.headers.get('content-length'))
+                      print('content-range:', response.headers.get('content-range'))
+                      print('content-disposition:', response.headers.get('content-disposition'))
+                      print(sample.decode('utf-8', 'replace'))
+              except urllib.error.HTTPError as exc:
+                  print('status:', exc.code)
+                  print('body:', exc.read(4096).decode('utf-8', 'replace'))
           PY
