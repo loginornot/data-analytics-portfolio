@@ -1,39 +1,83 @@
 # Data Setup
 
+Raw public datasets are not committed to this repository. Portfolio notebooks document their source, expected local filename, and validation steps.
+
+## Stack Overflow Salary Analysis
+
 The portfolio-ready Stack Overflow Salary Analysis uses the **2018 Stack Overflow Developer Survey**.
 
-The original 2019 Thinkful notebook loaded the survey from a local Windows path. The refreshed notebook instead looks for:
+Expected path:
 
 ```text
 data/survey_results_public.csv
 ```
 
-It also supports running the notebook from its own project folder by resolving the repository-level data directory.
-
-## Source
-
-Stack Overflow maintains the 2018 survey and its historical data in the official Developer Survey archive:
+### Source
 
 - 2018 survey results: https://survey.stackoverflow.co/2018/
 - Official survey archive: https://github.com/StackExchange/Survey/tree/main/packages/archive/2018
 
-The public 2018 release contains **98,855 qualified responses**. The refreshed notebook checks this row count before continuing so an incorrect survey file is not used accidentally.
+The public 2018 release contains **98,855 qualified responses**. The refreshed notebook checks this row count before continuing.
 
-The project uses fields including `Age`, `Gender`, `Employment`, `FormalEducation`, `YearsCodingProf`, `Salary`, `SalaryType`, `CurrencySymbol`, `WakeTime`, and `HoursComputer`.
+### Methodology note
 
-## Important methodology note
+The original coursework annualized monthly salary by multiplying by 12 and weekly salary by multiplying by **52**. Stack Overflow's published 2018 methodology used **50 working weeks**. The portfolio notebook intentionally preserves the original coursework logic and documents the difference. The original notebook also filtered annualized salary to values **above $50,000 and below $195,000**.
 
-The original coursework annualized monthly salary by multiplying by 12 and weekly salary by multiplying by **52**. Stack Overflow's published 2018 methodology used **50 working weeks** when creating its own annualized salary figures. The portfolio notebook intentionally preserves the original 52-week coursework logic and documents the difference.
+### To rerun
 
-The original notebook also filtered annualized salary to values **above $50,000 and below $195,000**.
+1. Obtain the official 2018 public survey response CSV.
+2. Save it as `data/survey_results_public.csv`.
+3. Run `Projects/Machine_Learning/Supervised_Learning_Projects/StackOverflow_Salary_Analysis_Portfolio.ipynb`.
 
-## To rerun the notebook
+---
 
-1. Obtain the 2018 public survey response CSV from the official Stack Overflow survey archive or an official historical distribution.
-2. Save the response file as `survey_results_public.csv` inside this `data/` directory.
-3. Open `Projects/Machine_Learning/Supervised_Learning_Projects/StackOverflow_Salary_Analysis_Portfolio.ipynb`.
-4. Run the notebook from the repository root or from the notebook's project directory.
+## Iowa Liquor Promotion Experiment Proposal
 
-## Why the CSV is not committed here
+The original 2019 Thinkful notebook loaded a local pickle created from the historical **Iowa Liquor Sales** dataset. That snapshot contained roughly 12.59 million statewide order lines and extended through **October 31, 2017**.
 
-The survey data are external source data rather than original portfolio code. Keeping the raw dataset outside the repository avoids unnecessarily increasing repository size and keeps the project focused on the analysis. The notebook documents the expected filename, source, and validation checks so the analysis can be reproduced with the original public data.
+Downloading today's full statewide dataset is unnecessary for the portfolio refresh. The refreshed notebook analyzes Casey's locations, so the repository includes a downloader that queries only the historical Casey's rows and only the fields required by the project.
+
+### Source
+
+- Iowa Liquor Sales API dataset identifier: `m3tr-qhgy`
+- Iowa Data Hub: https://data.iowa.gov/
+- Socrata API documentation: https://dev.socrata.com/foundry/data.iowa.gov/m3tr-qhgy
+
+Iowa describes this dataset as liquor **purchase information from Class E licensees by product and order date**. It is not consumer point-of-sale data.
+
+### Create the historical Casey's subset
+
+From the repository root, install dependencies and run:
+
+```text
+pip install -r requirements.txt
+python scripts/download_iowa_caseys_subset.py
+```
+
+The script requests records from 2012 through **2017-10-31** whose store name contains `Casey`, then saves:
+
+```text
+data/iowa_caseys_2012_to_2017_10_31.csv
+```
+
+The downloader selects the order, store, product, cost, quantity, and order-value fields needed by the portfolio notebook. This avoids downloading the multi-gigabyte statewide archive.
+
+Then run:
+
+```text
+Projects/Data_Analyze/Iowa_Liquor_Promotion_Experiment_Portfolio.ipynb
+```
+
+### Interpretation note
+
+The original notebook calculated:
+
+```text
+Sale (Dollars) - State Bottle Cost × Bottles Sold
+```
+
+and called the result `Profit`. Iowa's metadata indicate that `State Bottle Cost` is the amount the Alcoholic Beverages Division paid per bottle and `Sale (Dollars)` is the total amount charged to the licensee for the order. The portfolio refresh therefore does **not** describe this field as Casey's store profit. It preserves the calculation only for provenance and uses direct order measures and product penetration for the refreshed analysis.
+
+## Why these data are not committed
+
+These are external public-source datasets rather than original portfolio code. Keeping large raw files outside the repository reduces repository size while the notebooks and downloader scripts preserve reproducibility.
