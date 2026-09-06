@@ -4,13 +4,13 @@
 
 Build a modern, reproducible analytics project from the public **Iowa Liquor Sales, 2026** dataset and use it to answer a practical business question:
 
-> **Which stores should a distributor prioritize, and what should it recommend to each store segment to increase sales?**
+> **Which stores should a distributor prioritize, and which product categories appear underrepresented relative to similar stores?**
 
-Rather than beginning with modeling, the project first establishes whether the source data are trustworthy enough for analysis.
+The project starts with source validation and then turns the cleaned transaction data into an account-prioritization and assortment-review framework.
 
-## Status
+## Completed notebooks
 
-### Completed: Notebook 01 — Data Audit and Cleaning
+### Notebook 01 — Data Audit and Cleaning
 
 The audit covers **January 1 through July 31, 2026** and processes the snapshot as one analytical table even when the portal export is split across multiple CSV files.
 
@@ -26,9 +26,29 @@ Key results after cleaning:
 - **0 remaining missing store-geography rows**
 - **0 remaining missing category rows**
 
-The notebook also identifies a structural **January 2026 precision issue** affecting source cost, retail, liters, and gallons. Rather than inventing missing decimal precision, the workflow flags the affected source price fields, reconstructs volume from bottle count and bottle size, and uses transaction revenue to derive an effective unit sale price when appropriate.
+The audit also identifies a structural **January 2026 precision issue** affecting source cost, retail, liters, and gallons. Rather than inventing missing decimal precision, the workflow flags the affected source price fields, reconstructs defensible volume measures, and preserves the limitation for downstream analysis.
 
 [Open Notebook 01: Data Audit and Cleaning](notebooks/01_data_audit_cleaning.ipynb)
+
+### Notebook 02 — Store Segmentation and Assortment Opportunity
+
+The second notebook builds store-level features and uses K-means clustering to create three interpretable account tiers from **gross sales, ordering days, SKU breadth, and category breadth**.
+
+Verified segment profile:
+
+| Segment | Stores | Median gross sales | Median order days | Median SKUs | Median categories | Share of gross sales |
+|---|---:|---:|---:|---:|---:|---:|
+| Developing | 274 | $7,497 | 4 | 38 | 13 | 1.1% |
+| Core | 1,087 | $29,881 | 17 | 95 | 21 | 15.2% |
+| Strategic | 822 | $116,568 | 31 | 321 | 36 | 83.8% |
+
+The Strategic tier contains about **38% of stores but generates roughly 84% of gross sales**, making it the highest-leverage first tier for account review.
+
+The notebook then builds segment-level category benchmarks. A category qualifies only when it represents at least **1% of segment gross sales** and is purchased by at least **50% of stores** in that segment. Core and Strategic stores active in at least five months are screened for categories where actual sales are below **50% of the peer-mix benchmark** and the seven-month benchmark gap is at least **$5,000**.
+
+The resulting gap is explicitly treated as a **prioritization signal, not a forecast of incremental revenue**. Retail format, chain strategy, shelf space, geography, and local demand can all explain intentional deviations from peer mix.
+
+[Open Notebook 02: Store Segmentation and Assortment Opportunity](notebooks/02_store_segmentation_assortment_opportunity.ipynb)
 
 ## Cleaning decisions
 
@@ -43,11 +63,11 @@ The notebook also identifies a structural **January 2026 precision issue** affec
 | Zero source cost | 42 rows for one item | Keep; exclude from cost/margin use |
 | January numeric precision | Several source numeric fields largely lose decimals | Flag source prices; reconstruct defensible derived measures |
 
-## Reproduce the audit
+## Reproduce the project
 
 The raw data are not committed because the public dataset is large.
 
-1. Install the repository dependencies:
+1. Install the project dependencies:
    ```bash
    pip install -r requirements.txt
    ```
@@ -55,31 +75,16 @@ The raw data are not committed because the public dataset is large.
    https://data.iowa.gov/catalog/dataset/1263
 3. Place all CSV file(s) from the export under:
    ```text
-   Iowa_Liquor_Sales_2026/data/raw/
+   data/raw/
    ```
-4. Open:
-   ```text
-   notebooks/01_data_audit_cleaning.ipynb
-   ```
-5. Run the notebook from the project folder or the `notebooks/` folder.
+4. Run `notebooks/01_data_audit_cleaning.ipynb` to create the processed Parquet file.
+5. Run `notebooks/02_store_segmentation_assortment_opportunity.ipynb`.
 
-The notebook filters explicitly to **2026-01-01 through 2026-07-31**, so a later 2026 download can still reproduce the intended analysis window.
+Notebook 01 filters explicitly to **2026-01-01 through 2026-07-31**, so a later 2026 download can still reproduce the intended analysis window, subject to later corrections by the public data publisher.
 
-## Next stage
+## Next extension
 
-### Store Segmentation + Assortment Opportunity Analysis
-
-The next notebook will characterize stores using measures such as:
-
-- sales scale
-- order cadence
-- category mix
-- SKU breadth
-- premium-product mix
-- growth
-- return behavior
-
-The goal is to identify store segments and then find products or categories that under-index within otherwise comparable stores. A later extension may add invoice-level product affinity / market-basket analysis for cross-sell recommendations.
+A strong next extension would make the peer groups more specific by adding chain or retail-format context, then move from category-level gaps to **specific SKU recommendations** and invoice-level product affinity / market-basket analysis.
 
 ## Historical project
 
