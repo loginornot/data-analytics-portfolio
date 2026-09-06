@@ -1,8 +1,8 @@
 # Data Analytics & Machine Learning Portfolio
 
-Selected projects from my Thinkful Data Science training, originally completed in 2019. This repository demonstrates hands-on work in data cleaning, exploratory analysis, statistical testing, experiment design, machine learning, and natural language processing using Python and Jupyter Notebook.
+Selected projects from my Thinkful Data Science training and current portfolio refresh work. This repository demonstrates hands-on work in data cleaning, exploratory analysis, statistical testing, experiment design, machine learning, and natural language processing using Python and Jupyter Notebook.
 
-I also bring five years of U.S. Navy logistics experience and am currently transitioning into data analytics, with particular interest in data analyst, operations analyst, and business-focused analytics roles.
+I also bring five years of U.S. Navy logistics experience and am transitioning into data analytics, with particular interest in data analyst, operations analyst, and business-focused analytics roles.
 
 ## Technical Skills Demonstrated
 
@@ -26,14 +26,20 @@ Analyzed the 2018 Stack Overflow Developer Survey to investigate relationships b
 
 [View the preserved original 2019 notebook](Projects/Machine_Learning/Supervised_Learning_Projects/Stackoverflow_users_salary_prediction.ipynb)
 
-### 2. Iowa Liquor Sales A/B Test Proposal
-**Focus:** Business analysis, sales trends, profitability, experiment design
+### 2. Iowa Liquor Sales 2026 — Data Audit & Store Opportunity Analysis
+**Focus:** Large-scale data cleaning, data quality, reproducibility, business analysis
 
-Analyzed Iowa liquor transaction data and developed a business hypothesis around declining profit and product promotion. The project connects exploratory sales analysis with a proposed A/B testing approach to evaluate whether promotions could improve business performance.
+Rebuilt the Iowa Liquor Sales project around the current 2026 public dataset rather than treating the original 2019 A/B-test proposal as finished portfolio work. The first notebook audits and cleans more than 1.4 million January–July records, validates multi-file ingestion, preserves identifier fields, removes only exact duplicates, investigates returns and missingness, documents targeted enrichments, and detects a January source-precision issue before downstream analysis.
 
-**Skills:** Python, Pandas, NumPy, Matplotlib, Seaborn, business hypothesis development, A/B testing
+The next stage develops a **store segmentation and assortment opportunity analysis**: characterize retailers by scale, order cadence, category mix, SKU breadth, premium mix, growth, and return behavior, then identify product or category opportunities within comparable stores.
 
-[View the notebook](Projects/Data_Analyze/Iowa_Liquor_Store_AB_Test_Proposal.ipynb)
+**Skills:** Python, Pandas, NumPy, data validation, reproducible pipelines, data-quality auditing, business analysis
+
+[View the 2026 project](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/README.md)
+
+[Open Notebook 01: Data Audit and Cleaning](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/notebooks/01_data_audit_cleaning.ipynb)
+
+The [original 2019 Iowa A/B-test proposal](Projects/Data_Analyze/Iowa_Liquor_Store_AB_Test_Proposal.ipynb) is preserved separately as historical coursework.
 
 ### 3. Zillow Zestimate Kaggle Project
 **Focus:** Predictive modeling, supervised machine learning
@@ -58,6 +64,10 @@ Built an NLP workflow for news article text, including article collection, regul
 ```text
 Projects/
 ├── Data_Analyze/
+│   ├── Iowa_Liquor_Sales_2026/
+│   │   ├── README.md
+│   │   └── notebooks/
+│   │       └── 01_data_audit_cleaning.ipynb
 │   └── Iowa_Liquor_Store_AB_Test_Proposal.ipynb
 └── Machine_Learning/
     ├── Supervised_Learning_Projects/
@@ -70,4 +80,4 @@ Projects/
 
 ## Portfolio Note
 
-These projects originated in my 2019 Thinkful coursework. Portfolio-ready copies are being created separately from the original notebooks so the original work remains preserved during the refresh process. Documentation and reproducibility may be modernized, but the portfolio does not present the original analyses as newly completed work.
+The older projects in this repository originated in my 2019 Thinkful coursework. Portfolio-ready copies are created separately from preserved originals so the historical work remains intact. Documentation and reproducibility may be modernized, while new analyses are clearly identified as new work rather than presented as part of the original coursework.
