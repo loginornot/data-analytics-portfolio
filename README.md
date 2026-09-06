@@ -1,6 +1,6 @@
 # Data Analytics & Machine Learning Portfolio
 
-Selected projects from my Thinkful Data Science training and current portfolio refresh work. This repository demonstrates hands-on work in data cleaning, exploratory analysis, statistical testing, experiment design, machine learning, and natural language processing using Python and Jupyter Notebook.
+Selected projects from my Thinkful Data Science training and current portfolio refresh work. This repository demonstrates hands-on work in large-scale data cleaning, statistical analysis, business analytics, clustering, predictive modeling, and natural language processing using Python and Jupyter Notebook.
 
 I also bring five years of U.S. Navy logistics experience and am transitioning into data analytics, with particular interest in data analyst, operations analyst, and business-focused analytics roles.
 
@@ -9,13 +9,33 @@ I also bring five years of U.S. Navy logistics experience and am transitioning i
 - **Python:** Pandas, NumPy, SciPy
 - **Visualization:** Matplotlib, Seaborn
 - **Statistics:** descriptive analysis, hypothesis testing, t-tests, A/B test design
-- **Machine Learning:** scikit-learn, supervised and unsupervised learning workflows
+- **Machine Learning:** scikit-learn, K-means clustering, supervised and unsupervised workflows
+- **Business Analytics:** data-quality auditing, store segmentation, peer benchmarking, assortment opportunity analysis
 - **NLP:** NLTK, spaCy, text cleaning, tokenization, lemmatization, vectorization
 - **Tools:** Jupyter Notebook, Git, GitHub
 
 ## Featured Projects
 
-### 1. Stack Overflow Salary Analysis
+### 1. Iowa Liquor Sales 2026 — Store Segmentation & Assortment Opportunity
+**Focus:** Large-scale data cleaning, reproducibility, customer/store segmentation, business decision support
+
+Built a new portfolio analysis around the 2026 Iowa Liquor Sales public dataset. The project begins with a reproducible audit of more than **1.4 million January–July transaction rows**, including multi-file schema validation, exact-duplicate handling, return identification, targeted missing-data enrichment, and detection of a January source-precision issue.
+
+The second notebook converts the cleaned transaction data into store-level features and uses K-means clustering to create three interpretable account tiers from **gross sales, ordering cadence, SKU breadth, and category breadth**. The resulting Strategic tier contains **822 of 2,183 stores** but represents roughly **84% of gross sales**. Segment-level category benchmarks are then used to surface under-indexed assortment areas for account review.
+
+The assortment gap is explicitly treated as a **peer-benchmarking signal rather than a revenue forecast**, with retail format, chain strategy, geography, and local demand documented as limitations.
+
+**Skills:** Python, Pandas, NumPy, scikit-learn, Matplotlib, data validation, feature engineering, clustering, peer benchmarking, business analysis
+
+[View the 2026 project](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/README.md)
+
+[Open Notebook 01: Data Audit and Cleaning](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/notebooks/01_data_audit_cleaning.ipynb)
+
+[Open Notebook 02: Store Segmentation and Assortment Opportunity](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/notebooks/02_store_segmentation_assortment_opportunity.ipynb)
+
+The [original 2019 Iowa A/B-test proposal](Projects/Data_Analyze/Iowa_Liquor_Store_AB_Test_Proposal.ipynb) is preserved separately as historical coursework.
+
+### 2. Stack Overflow Salary Analysis
 **Focus:** Data cleaning, exploratory analysis, statistical testing, compensation analysis
 
 Analyzed the 2018 Stack Overflow Developer Survey to investigate relationships between compensation and factors such as age, professional coding experience, formal education, and work-pattern variables among respondents who reported salary in U.S. dollars. The portfolio-ready version preserves the original 2019 coursework logic while improving reproducibility, documentation, neutral labeling, and statistical interpretation. Selected descriptive charts use medians as a presentation refinement.
@@ -25,21 +45,6 @@ Analyzed the 2018 Stack Overflow Developer Survey to investigate relationships b
 [View the portfolio-ready notebook](Projects/Machine_Learning/Supervised_Learning_Projects/StackOverflow_Salary_Analysis_Portfolio.ipynb)
 
 [View the preserved original 2019 notebook](Projects/Machine_Learning/Supervised_Learning_Projects/Stackoverflow_users_salary_prediction.ipynb)
-
-### 2. Iowa Liquor Sales 2026 — Data Audit & Store Opportunity Analysis
-**Focus:** Large-scale data cleaning, data quality, reproducibility, business analysis
-
-Rebuilt the Iowa Liquor Sales project around the current 2026 public dataset rather than treating the original 2019 A/B-test proposal as finished portfolio work. The first notebook audits and cleans more than 1.4 million January–July records, validates multi-file ingestion, preserves identifier fields, removes only exact duplicates, investigates returns and missingness, documents targeted enrichments, and detects a January source-precision issue before downstream analysis.
-
-The next stage develops a **store segmentation and assortment opportunity analysis**: characterize retailers by scale, order cadence, category mix, SKU breadth, premium mix, growth, and return behavior, then identify product or category opportunities within comparable stores.
-
-**Skills:** Python, Pandas, NumPy, data validation, reproducible pipelines, data-quality auditing, business analysis
-
-[View the 2026 project](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/README.md)
-
-[Open Notebook 01: Data Audit and Cleaning](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/notebooks/01_data_audit_cleaning.ipynb)
-
-The [original 2019 Iowa A/B-test proposal](Projects/Data_Analyze/Iowa_Liquor_Store_AB_Test_Proposal.ipynb) is preserved separately as historical coursework.
 
 ### 3. Zillow Zestimate Kaggle Project
 **Focus:** Predictive modeling, supervised machine learning
@@ -66,8 +71,10 @@ Projects/
 ├── Data_Analyze/
 │   ├── Iowa_Liquor_Sales_2026/
 │   │   ├── README.md
+│   │   ├── requirements.txt
 │   │   └── notebooks/
-│   │       └── 01_data_audit_cleaning.ipynb
+│   │       ├── 01_data_audit_cleaning.ipynb
+│   │       └── 02_store_segmentation_assortment_opportunity.ipynb
 │   └── Iowa_Liquor_Store_AB_Test_Proposal.ipynb
 └── Machine_Learning/
     ├── Supervised_Learning_Projects/
