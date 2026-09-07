@@ -10,28 +10,30 @@ I also bring five years of U.S. Navy logistics experience and am transitioning i
 - **Visualization:** Matplotlib, Seaborn
 - **Statistics:** descriptive analysis, hypothesis testing, t-tests, A/B test design
 - **Machine Learning:** scikit-learn, K-means clustering, supervised and unsupervised workflows
-- **Business Analytics:** data-quality auditing, store segmentation, peer benchmarking, assortment opportunity analysis
+- **Business Analytics:** data-quality auditing, market structure analysis, store segmentation, peer benchmarking, assortment opportunity analysis
 - **NLP:** NLTK, spaCy, text cleaning, tokenization, lemmatization, vectorization
 - **Tools:** Jupyter Notebook, Git, GitHub
 
 ## Featured Projects
 
-### 1. Iowa Liquor Sales 2026 — Store Segmentation & Assortment Opportunity
-**Focus:** Large-scale data cleaning, reproducibility, customer/store segmentation, business decision support
+### 1. Iowa Liquor Sales 2026 — Market Structure, Store Segmentation & Assortment Opportunity
+**Focus:** Large-scale data cleaning, reproducibility, business segmentation, peer benchmarking, recommendation logic
 
 Built a new portfolio analysis around the 2026 Iowa Liquor Sales public dataset. The project begins with a reproducible audit of more than **1.4 million January–July transaction rows**, including multi-file schema validation, exact-duplicate handling, return identification, targeted missing-data enrichment, and detection of a January source-precision issue.
 
-The second notebook converts the cleaned transaction data into store-level features and uses K-means clustering to create three interpretable account tiers from **gross sales, ordering cadence, SKU breadth, and category breadth**. The resulting Strategic tier contains **822 of 2,183 stores** but represents roughly **84% of gross sales**. Segment-level category benchmarks are then used to surface under-indexed assortment areas for account review.
+The second notebook converts transaction history into store-level commercial features and evaluates K-means solutions from `k = 2` through `8`. The validated two-segment solution separates **1,354 Focused / Premium-Leaning stores** from **721 High-Volume / Broad-Assortment stores**, while **108 sparse-history stores** are deliberately kept out of clustering rather than forced into a peer group.
 
-The assortment gap is explicitly treated as a **peer-benchmarking signal rather than a revenue forecast**, with retail format, chain strategy, geography, and local demand documented as limitations.
+The third notebook uses those peer groups to identify category and product whitespace. Recommendation rules require meaningful peer penetration, recent demand, and multi-month support, while filtering specialty packaging and package-size duplicates. The final pipeline produces **671 eligible peer products** and ranks store-level assortment opportunities as transparent peer benchmarks rather than revenue forecasts.
 
-**Skills:** Python, Pandas, NumPy, scikit-learn, Matplotlib, data validation, feature engineering, clustering, peer benchmarking, business analysis
+**Skills:** Python, Pandas, NumPy, scikit-learn, Matplotlib, data validation, feature engineering, market concentration, clustering, model evaluation, peer benchmarking, recommendation logic, business analysis
 
 [View the 2026 project](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/README.md)
 
-[Open Notebook 01: Data Audit and Cleaning](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/notebooks/01_data_audit_cleaning.ipynb)
+[Open Notebook 01: Data Audit & Cleaning](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/notebooks/01_data_audit_cleaning.ipynb)
 
-[Open Notebook 02: Store Segmentation and Assortment Opportunity](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/notebooks/02_store_segmentation_assortment_opportunity.ipynb)
+[Open Notebook 02: Market Structure & Store Segmentation](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/notebooks/02_market_structure_store_segmentation.ipynb)
+
+[Open Notebook 03: Assortment Opportunity Analysis](Projects/Data_Analyze/Iowa_Liquor_Sales_2026/notebooks/03_assortment_opportunity_analysis.ipynb)
 
 The [original 2019 Iowa A/B-test proposal](Projects/Data_Analyze/Iowa_Liquor_Store_AB_Test_Proposal.ipynb) is preserved separately as historical coursework.
 
@@ -74,7 +76,8 @@ Projects/
 │   │   ├── requirements.txt
 │   │   └── notebooks/
 │   │       ├── 01_data_audit_cleaning.ipynb
-│   │       └── 02_store_segmentation_assortment_opportunity.ipynb
+│   │       ├── 02_market_structure_store_segmentation.ipynb
+│   │       └── 03_assortment_opportunity_analysis.ipynb
 │   └── Iowa_Liquor_Store_AB_Test_Proposal.ipynb
 └── Machine_Learning/
     ├── Supervised_Learning_Projects/
